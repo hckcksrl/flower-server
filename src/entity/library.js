@@ -1,18 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { User } from "./user";
+import { Users } from "./user";
 
 @Entity()
 export class Library {
   @PrimaryGeneratedColumn()
   id = undefined;
 
-  @Column("varchar")
+  @Column({ type: "varchar", nullable: true })
   library_name = "";
 
-  @ManyToOne(type => User, user => user.librarys, {
+  @ManyToOne(() => Users, user => user.librarys, {
     cascade: true,
     nullable: false,
     onDelete: "CASCADE"
   })
-  user = User;
+  user = Users;
 }
