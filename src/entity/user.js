@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Library } from "./library";
+import { Image } from "./image";
 
 @Entity()
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id = undefined;
 
@@ -12,6 +13,9 @@ export class User {
   @Column({ type: "varchar", nullable: false })
   password = "";
 
-  @OneToMany(type => Library, library => library.user)
+  @OneToMany(() => Library, library => library.user)
   librarys = Library;
+
+  @OneToMany(() => Image, image => image.id)
+  images = Image;
 }
