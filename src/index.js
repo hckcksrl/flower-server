@@ -5,43 +5,54 @@ import {
   getConnection,
   ConnectionOptions
 } from "typeorm";
-import { User } from "./entity/user";
+import { Users } from "./entity/user";
 import { connectionOptions } from "./ormconfig";
 import { Library } from "./entity/library";
+import bodyParser from "body-parser";
+import { Flower } from "./entity/flower";
+import { Image } from "./entity/image";
 
+const login = require("../src/router/login");
 const app = express();
 
 app.get("/", async (req, res) => {
-  // const result = await getRepository(User)
+  // const result = await getRepository(Image)
   //   .createQueryBuilder()
   //   .insert()
-  //   .into(User)
-  //   .values({ email: "hckcksrl@naver.com", password: "asd" })
+  //   .into(Image)
+  //   .values({
+  //     image_path: "d",
+  //     user: 3,
+  //     flower: 1
+  //   })
   //   .execute();
 
-  const result = await getRepository(Library)
+  const result = await getRepository(Users)
     .createQueryBuilder()
     .insert()
-    .into(Library)
-    .values({ library_name: "한글", user: 1 })
+    .into("users")
+    .values({ email: "hckcksrl@naver.com", password: "asdasd" })
     .execute();
 
   res.send(result);
 });
 
-app.get("/:id", async (req, res) => {
-  const result = await getRepository(Library)
-    .createQueryBuilder("library")
-    .where("library.userId=:id", { id: req.params })
-    .getOne();
+// app.get("/:id", async (req, res) => {
+//   // const result = await getRepository(Library)
+//   //   .createQueryBuilder("library")
+//   //   .where("library.userId=:id", { id: req.params })
+//   //   .getOne();
 
-  // const result = await getRepository(User)
-  //   .createQueryBuilder("user")
-  //   .where("user.id=:id", { id: req.params })
-  //   .getOne();
+//   // const result = await getRepository(User)
+//   //   .createQueryBuilder("user")
+//   //   .where("user.id=:id", { id: req.params })
+//   //   .getOne();
 
-  res.send(result);
-});
+//   res.send(req.params);
+// });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/user", login);
 
 createConnection(connectionOptions)
   .then(() => {
