@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Users } from "./user";
 import { Flower } from "./flower";
+import { Disting } from "./disting";
 
 @Entity()
 export class Image {
@@ -18,11 +19,8 @@ export class Image {
   @Column({ type: "varchar", nullable: false, unique: true })
   image_path = "";
 
-  @ManyToMany(() => Flower, {
-    cascade: ["insert"]
-  })
-  @JoinTable()
-  flower = Flower;
+  @OneToMany(() => Disting, disting => disting.id)
+  disting = Disting;
 
   @ManyToOne(() => Users, user => user.id)
   user = Users;
