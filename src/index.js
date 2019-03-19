@@ -1,61 +1,39 @@
 import express from "express";
-import {
-  createConnection,
-  getRepository,
-  getConnection,
-  ConnectionOptions
-} from "typeorm";
+import { createConnection, getRepository } from "typeorm";
 import { Users } from "./entity/user";
 import { connectionOptions } from "./ormconfig";
-import { Library } from "./entity/library";
 import bodyParser from "body-parser";
-import { Flower } from "./entity/flower";
-import { Image } from "./entity/image";
-
-const login = require("../src/router/login");
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+import login from "./router/user/login";
+import flower from "./router/flower/flowers";
+import image from "./router/image/image";
+import library from "./router/library/library";
+import DecodeJwt from "./jwt/decodeJwt";
 const app = express();
 
-app.get("/", async (req, res) => {
-  // const result = await getRepository(Image)
-  //   .createQueryBuilder()
-  //   .insert()
-  //   .into(Image)
-  //   .values({
-  //     image_path: "d",
-  //     user: 3,
-  //     flower: 1
-  //   })
-  //   .execute();
-
-  const result = await getRepository(Users)
-    .createQueryBuilder()
-    .insert()
-    .into("users")
-    .values({ email: "hckcksrl@naver.com", password: "asdasd" })
-    .execute();
-
-  res.send(result);
-});
-
-// app.get("/:id", async (req, res) => {
-//   // const result = await getRepository(Library)
-//   //   .createQueryBuilder("library")
-//   //   .where("library.userId=:id", { id: req.params })
-//   //   .getOne();
-
-//   // const result = await getRepository(User)
-//   //   .createQueryBuilder("user")
-//   //   .where("user.id=:id", { id: req.params })
-//   //   .getOne();
-
-//   res.send(req.params);
-// });
+const jwt = async (req, res, next) => {
+  const token = req.get("Authorization");
+  if (token != undefined) {
+    const user = await DecodeJwt(token);
+    if (user) {
+      req.user = user;
+    } else {
+      req.user = undefined;
+    }
+  }
+  next();
+};
+app.use(jwt);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/user", login);
+app.use("/api/user", login);
+app.use("/api/flower", flower);
+app.use("/api/image", image);
+app.use("/api/library", library);
 
 createConnection(connectionOptions)
   .then(() => {
-    app.listen(4000, () => console.log("start"));
+    app.listen(process.env.PORT, () => console.log(process.env.PORT));
   })
   .catch(err => console.log(err));
