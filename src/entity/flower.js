@@ -7,6 +7,7 @@ import {
   JoinTable
 } from "typeorm";
 import { Image } from "./image";
+import { Disting } from "./disting";
 
 @Entity()
 export class Flower {
@@ -31,6 +32,6 @@ export class Flower {
   @Column({ type: "varchar", nullable: false })
   weather = "";
 
-  @ManyToMany(() => Image, { cascade: ["insert"] })
-  images = Image;
+  @OneToMany(() => Disting, disting => disting.id)
+  disting = Disting;
 }
